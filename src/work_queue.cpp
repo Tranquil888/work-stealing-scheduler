@@ -75,9 +75,10 @@ bool ChaseLevDeque::try_pop(TaskPtr& out) {
             }
             bottom_.store(b + 1, std::memory_order_relaxed);
         }
-        // Steal from the top so owner and thief don't contend on the same slot.
+        // Slots are never reset: a loser may still be copying this shared_ptr
+        // while the winner returns, and resetting under a concurrent copy is
+        // a data race. Stale entries are overwritten by later pushes.
         out = slots_[static_cast<std::size_t>(b) % kCapacity];
-        slots_[static_cast<std::size_t>(b) % kCapacity].reset();
         return true;
     }
     bottom_.store(b + 1, std::memory_order_relaxed);
@@ -94,7 +95,6 @@ bool ChaseLevDeque::try_steal(TaskPtr& out) {
                                       std::memory_order_relaxed)) {
         return false;
     }
-    slots_[static_cast<std::size_t>(t) % kCapacity].reset();
     return true;
 }
 

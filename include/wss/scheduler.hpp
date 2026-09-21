@@ -6,7 +6,6 @@
 #include <functional>
 #include <memory>
 #include <mutex>
-#include <thread>
 #include <type_traits>
 #include <vector>
 
@@ -96,8 +95,11 @@ public:
     }
 
     void shutdown(bool drain = true);
+    // Empty queues twice in a row, not a guarantee that bodies already
+    // running have finished. Join on futures when that matters.
     bool wait_idle(std::chrono::milliseconds timeout) const;
     std::size_t worker_count() const noexcept { return workers_.size(); }
+    // Zeros unless a MetricsCollector was installed via set_observer.
     MetricsSnapshot metrics() const;
 
     void set_observer(std::shared_ptr<ITaskObserver> observer);

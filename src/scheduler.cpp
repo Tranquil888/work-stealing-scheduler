@@ -1,4 +1,6 @@
+#include <chrono>
 #include <stdexcept>
+#include <thread>
 #include <wss/scheduler.hpp>
 
 namespace wss {

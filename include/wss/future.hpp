@@ -93,6 +93,7 @@ public:
     template <typename F, typename Executor>
     auto then(F&& func, Executor& exec) -> Future<std::invoke_result_t<F, T>> {
         using R = std::invoke_result_t<F, T>;
+        if (!state_) throw BrokenPromise{};
         auto next = std::make_shared<SharedState<R>>();
         Future<R> out(next);
         auto prev = state_;
@@ -130,6 +131,7 @@ public:
     auto then_with_token(F&& func, Executor& exec, CancellationToken tok)
         -> Future<std::invoke_result_t<F, T>> {
         using R = std::invoke_result_t<F, T>;
+        if (!state_) throw BrokenPromise{};
         auto next = std::make_shared<SharedState<R>>();
         Future<R> out(next);
         auto prev = state_;

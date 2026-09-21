@@ -64,7 +64,6 @@ private:
     std::condition_variable cv_;
     std::atomic<bool> stop_local_{false};
     std::atomic<bool> running_{false};
-    StealContext* ctx_{nullptr};
 };
 
 }  // namespace wss

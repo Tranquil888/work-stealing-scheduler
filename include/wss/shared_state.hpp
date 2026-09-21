@@ -6,7 +6,6 @@
 #include <functional>
 #include <memory>
 #include <mutex>
-#include <optional>
 #include <type_traits>
 #include <utility>
 #include <variant>
@@ -81,13 +80,6 @@ public:
             }
         }
         if (run_now) cb();
-    }
-
-    bool try_get(T& out) {
-        std::lock_guard<std::mutex> lock(mutex_);
-        if (!ready_ || !std::holds_alternative<T>(storage_)) return false;
-        out = std::get<T>(storage_);
-        return true;
     }
 
 private:

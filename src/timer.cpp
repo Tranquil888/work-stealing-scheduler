@@ -113,6 +113,7 @@ void TimerService::loop() {
             try {
                 submit_(std::move(fire));
             } catch (...) {
+                // Scheduler is gone; nowhere left to submit to.
             }
         }
     }

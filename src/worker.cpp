@@ -14,7 +14,6 @@ Worker::~Worker() {
 }
 
 void Worker::start(StealContext* ctx) {
-    ctx_ = ctx;
     stop_local_.store(false, std::memory_order_release);
     thread_ = std::thread([this, ctx] { run(ctx); });
 }

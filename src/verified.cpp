@@ -1,4 +1,3 @@
-#include <algorithm>
 #include <unordered_set>
 #include <wss/verified.hpp>
 

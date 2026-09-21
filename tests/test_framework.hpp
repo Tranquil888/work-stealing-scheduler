@@ -34,25 +34,32 @@ inline void check(bool cond, const char* expr, const char* file, int line) {
     } else {
         ++failures;
         std::printf("FAIL %s:%d: %s\n", file, line, expr);
+        std::fflush(stdout);
     }
 }
 
 inline int run_all() {
     for (auto& c : registry()) {
+        std::printf("run %s.%s\n", c.suite.c_str(), c.name.c_str());
+        std::fflush(stdout);
         try {
             c.func();
             std::printf("ok %s.%s\n", c.suite.c_str(), c.name.c_str());
+            std::fflush(stdout);
         } catch (const std::exception& e) {
             ++failures;
             std::printf("FAIL %s.%s threw: %s\n", c.suite.c_str(), c.name.c_str(),
                         e.what());
+            std::fflush(stdout);
         } catch (...) {
             ++failures;
             std::printf("FAIL %s.%s threw unknown\n", c.suite.c_str(),
                         c.name.c_str());
+            std::fflush(stdout);
         }
     }
     std::printf("%d passed, %d failed\n", passes, failures);
+    std::fflush(stdout);
     return failures == 0 ? 0 : 1;
 }
 

@@ -18,6 +18,12 @@ public:
     Promise(Promise&&) noexcept = default;
     Promise& operator=(Promise&&) noexcept = default;
 
+    ~Promise() {
+        if (state_ && !state_->is_ready()) {
+            state_->set_exception(std::make_exception_ptr(BrokenPromise{}));
+        }
+    }
+
     Future<T> get_future() const { return Future<T>{state_}; }
 
     bool valid() const noexcept { return static_cast<bool>(state_); }
@@ -49,6 +55,12 @@ public:
     Promise& operator=(const Promise&) = delete;
     Promise(Promise&&) noexcept = default;
     Promise& operator=(Promise&&) noexcept = default;
+
+    ~Promise() {
+        if (state_ && !state_->is_ready()) {
+            state_->set_exception(std::make_exception_ptr(BrokenPromise{}));
+        }
+    }
 
     Future<void> get_future() const { return Future<void>{state_}; }
 

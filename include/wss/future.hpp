@@ -19,6 +19,11 @@ class Future;
 template <typename T>
 class Promise;
 
+class BrokenPromise : public std::exception {
+public:
+    const char* what() const noexcept override { return "wss: broken promise"; }
+};
+
 template <typename T>
 class FutureTask final : public TaskBase {
 public:

@@ -83,4 +83,19 @@ WSS_TEST(Future, WaitForTimesOut) {
     EXPECT_EQ(f.get(), 1);
 }
 
+WSS_TEST(Future, DestroyedPromiseThrows) {
+    wss::Future<int> f;
+    {
+        wss::Promise<int> p;
+        f = p.get_future();
+    }
+    bool caught = false;
+    try {
+        f.get();
+    } catch (const wss::BrokenPromise&) {
+        caught = true;
+    }
+    EXPECT_TRUE(caught);
+}
+
 WSS_TEST_MAIN()

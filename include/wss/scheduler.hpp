@@ -67,8 +67,15 @@ public:
         return fut;
     }
 
-    TaskHandle submit(std::function<void()> func);
-    TaskHandle submit(std::function<void()> func, CancellationToken tok);
+    template <typename F>
+    auto submit(F&& func, CancellationToken tok)
+        -> Future<std::invoke_result_t<F>> {
+        return submit_with_token(std::forward<F>(func), tok);
+    }
+
+    // Fire-and-forget handles come from submit_task; submit always returns
+    // a Future. The scheduler must outlive continuations registered via
+    // Future::then, and set_observer must precede the first submit.
 
     template <typename F>
     TimerHandle schedule_after(std::chrono::nanoseconds delay, F&& func) {

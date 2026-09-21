@@ -53,6 +53,8 @@ public:
     ChaseLevDeque(const ChaseLevDeque&) = delete;
     ChaseLevDeque& operator=(const ChaseLevDeque&) = delete;
 
+    // Single-owner push: only the owning worker thread may call this.
+    // External threads deliver via Worker::post_external instead.
     bool push(TaskPtr task) override;
     bool try_pop(TaskPtr& out) override;
     bool try_steal(TaskPtr& out) override;

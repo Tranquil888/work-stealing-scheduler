@@ -1,5 +1,5 @@
 *.exe
-build/
+build*/
 lean/.lake/
 lean/build/
 lean/lake-packages/

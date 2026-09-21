@@ -48,7 +48,12 @@ not extension points.
 ## Ownership
 
 - `Scheduler` owns `Worker` objects via `unique_ptr`.
-- `Worker` owns its `IWorkQueue` via `unique_ptr`.
+- `Worker` owns its `IWorkQueue` via `unique_ptr`, plus a `MutexQueue`
+  inbox for externally submitted tasks.
+- External pushes never touch the deque directly: `Scheduler::route`
+  posts to the worker's inbox, and the worker drains the inbox into its
+  deque at the top of each loop iteration. This keeps the Chase–Lev
+  push/pop single-owner while submissions stay thread-safe.
 - `TaskHandle` is a `shared_ptr<ITask>` wrapper; the scheduler and the
   queues hold `shared_ptr`s while a task is pending/running, users hold
   handles as long as they need them.

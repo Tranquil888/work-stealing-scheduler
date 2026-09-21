@@ -40,8 +40,14 @@ sides contend only when a single element remains. That case is settled by
 one CAS on `top`. Ordering: release on push, acquire on pop/steal
 observations, `seq_cst` on the single-element CAS. No verbatim copy from
 any paper; the capacity is fixed (8192 slots) to keep the proof surface
-small, and a full queue reports `false` so the scheduler can reroute
-instead of silently growing.
+small.
+
+One protocol rule matters more than the rest: push and pop must be
+single-owner. The first version let `Scheduler::route` push from any
+submitter thread straight into the deque and lost tasks under contention —
+the owner could rewind `bottom` over a concurrent push. The fix is a
+per-worker mutex inbox: external threads post there, and only the owning
+worker moves inbox tasks into its deque. Stealing still needs no locks.
 
 ## Futures without blocking workers
 
